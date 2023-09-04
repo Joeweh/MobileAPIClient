@@ -1,4 +1,4 @@
-package com.github.joeweh.mobileapiclient.ui
+package com.github.joeweh.mobileapiclient.ui.register
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -9,27 +9,29 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-
 import com.github.joeweh.mobileapiclient.ui.theme.AppTheme
-import com.github.joeweh.mobileapiclient.utils.HttpTest
+import kotlinx.coroutines.launch
 
 @Preview(showSystemUi = true)
 @Composable
-fun LoginPreview() {
+fun RegisterPreview() {
     AppTheme(
         useDarkTheme = true
     ) {
         Surface {
-            LoginScreen(navController = rememberNavController())
+            RegisterScreen(navController = rememberNavController())
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun RegisterScreen(navController: NavController) {
+
     var emailFieldState by remember {
         mutableStateOf("")
     }
@@ -37,6 +39,12 @@ fun LoginScreen(navController: NavController) {
     var pwFieldState by remember {
         mutableStateOf("")
     }
+
+    var confirmPwFieldState by remember {
+        mutableStateOf("")
+    }
+
+    val viewModel = viewModel { RegisterViewModel() }
 
     Column(
         modifier = Modifier
@@ -46,7 +54,7 @@ fun LoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            "Sign In",
+            "Sign Up",
             fontSize = 40.sp,
         )
 
@@ -69,11 +77,6 @@ fun LoginScreen(navController: NavController) {
             ),
         )
 
-        Spacer(
-            modifier = Modifier
-                .height(10.dp)
-        )
-
         OutlinedTextField(
             value = pwFieldState,
             label = {
@@ -88,6 +91,20 @@ fun LoginScreen(navController: NavController) {
             ),
         )
 
+        OutlinedTextField(
+            value = confirmPwFieldState,
+            label = {
+                Text("Confirm Password")
+            },
+            onValueChange = {
+                confirmPwFieldState = it
+            },
+            singleLine = true,
+            textStyle = TextStyle(
+                fontSize = 16.sp,
+            ),
+        )
+
         Spacer(
             modifier = Modifier
                 .height(25.dp)
@@ -95,13 +112,16 @@ fun LoginScreen(navController: NavController) {
 
         Button(
             onClick = {
-                HttpTest.login(emailFieldState, pwFieldState)
+                viewModel.viewModelScope.launch {
+                    viewModel.register(emailFieldState, pwFieldState)
+                }
+
                 navController.navigate("home")
             },
             contentPadding = PaddingValues(horizontal = 50.dp, vertical = 20.dp)
         ) {
             Text(
-                "Login",
+                "Sign Up",
                 fontSize = 20.sp,
                 letterSpacing = 1.5.sp
             )
@@ -115,13 +135,13 @@ fun LoginScreen(navController: NavController) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Don't Have An Account?")
+            Text("Already Have An Account?")
             TextButton(onClick = {
-                navController.navigate("createaccount")
+                navController.navigate("login")
             },
             ) {
                 Text(
-                    "Sign Up",
+                    "Sign In",
                     fontSize = 15.sp,
                     letterSpacing = 1.5.sp
                 )

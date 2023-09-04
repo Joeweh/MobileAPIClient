@@ -9,9 +9,10 @@ import androidx.compose.material3.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.github.joeweh.mobileapiclient.ui.CreateAccountScreen
-import com.github.joeweh.mobileapiclient.ui.HomeScreen
-import com.github.joeweh.mobileapiclient.ui.LoginScreen
+import com.github.joeweh.mobileapiclient.ui.home.HomeScreen
+import com.github.joeweh.mobileapiclient.ui.login.LoginScreen
+import com.github.joeweh.mobileapiclient.ui.register.RegisterScreen
+
 import com.github.joeweh.mobileapiclient.ui.theme.AppTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,13 +20,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            AppTheme(
-
-            ) {
+            AppTheme {
                 Surface {
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") { LoginScreen(navController) }
-                        composable("createaccount") { CreateAccountScreen(navController) }
+                        composable("createaccount") { RegisterScreen(navController) }
                         composable("home") { HomeScreen(navController) }
                     }
                 }
